@@ -46,10 +46,36 @@ const useSheetStoreComputed = () => {
     return headers
   }, [getActiveSheet, getHeaders, selectedColumns, setSelectedColumns])
 
+  const getFilteredHeaders = useCallback(() => {
+    const headers = getHeaders()
+    const selectedColumns = getSelectedColumns()
+
+    return headers.filter(header => selectedColumns.includes(header))
+  }, [getHeaders, getSelectedColumns])
+
+  const getFilteredExcelData = useCallback(() => {
+    const activeSheet = getActiveSheet()
+    if (!activeSheet) {
+      return []
+    }
+
+    const currentSheetData = excelData?.find(excelSheet => excelSheet.sheetName === activeSheet)?.data || []
+    const headers = getFilteredHeaders()
+
+    return currentSheetData.map(row => {
+      return headers.reduce((acc, column) => {
+        acc[column] = row[column]
+        return acc
+      }, {} as Record<string, string>)
+    })
+  }, [getActiveSheet, excelData, getFilteredHeaders])
+
   return {
     getActiveSheet,
     getHeaders,
     getSelectedColumns,
+    getFilteredHeaders,
+    getFilteredExcelData
   }
 }
 
