@@ -1,5 +1,5 @@
 "use client"
-import { cn } from "@/lib/utils"
+import { cn, excelDateToJSDate } from "@/lib/utils"
 import { useAppStore } from "@/store/store"
 import { type ChangeEvent, type FunctionComponent, useCallback } from "react"
 import { FaFileExcel } from "react-icons/fa"
@@ -33,19 +33,25 @@ const ExcelUpload: FunctionComponent = () => {
         const headers = trimmedSheetData[0]
         trimmedSheetData.shift()
 
+        if (trimmedSheetData.length === 0) {
+          continue
+        }
+
         const formattedSheetData = trimmedSheetData.map(row => {
           const rowKeyVal: Record<string, string> = {}
           for (let i = 0; i < headers.length; i++) {
             if (headers[i]) {
-              rowKeyVal[headers[i]] = row[i]
+              if (headers[i].toString().toLowerCase().includes("date")) {
+                rowKeyVal[headers[i]] = excelDateToJSDate(row[i])
+              } else {
+                rowKeyVal[headers[i]] = row[i]
+              }
             }
           }
           return rowKeyVal
         })
 
-        if (formattedSheetData.length > 0) {
-          jsonData.push({ sheetName, data: formattedSheetData })
-        }
+        jsonData.push({ sheetName, data: formattedSheetData })
       }
 
       if (jsonData.length === 0) {

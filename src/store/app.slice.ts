@@ -73,6 +73,8 @@ export const createAppSlice: StateCreator<AppSlice> = (setState, getState) => ({
   clearData: () => {
     localStorage.removeItem("excelData")
     localStorage.removeItem("activeSheet")
+    localStorage.removeItem("selectedColumns")
     setState({ excelData: [], activeSheet: undefined })
+    setState({ showExcelUpload: true })
   },
 })
