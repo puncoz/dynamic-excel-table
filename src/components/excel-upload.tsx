@@ -26,12 +26,25 @@ const ExcelUpload: FunctionComponent = () => {
       const jsonData = []
       for (const sheetName of sheets) {
         const worksheet = workbook.Sheets[sheetName]
-        const sheetData: string[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "", raw: true })
+        const sheetData: string[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: null, raw: true })
 
-        const trimmedSheetData = sheetData.filter(row => !row.every(cell => !cell.toString().trim()))
+        const trimmedSheetData = sheetData.filter(row => !row.every(cell => !cell || !cell.toString().trim()))
 
-        if (sheetData.length > 0) {
-          jsonData.push({ sheetName, data: trimmedSheetData })
+        const headers = trimmedSheetData[0]
+        trimmedSheetData.shift()
+
+        const formattedSheetData = trimmedSheetData.map(row => {
+          const rowKeyVal: Record<string, string> = {}
+          for (let i = 0; i < headers.length; i++) {
+            if (headers[i]) {
+              rowKeyVal[headers[i]] = row[i]
+            }
+          }
+          return rowKeyVal
+        })
+
+        if (formattedSheetData.length > 0) {
+          jsonData.push({ sheetName, data: formattedSheetData })
         }
       }
 

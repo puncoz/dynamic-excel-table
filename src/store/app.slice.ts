@@ -2,7 +2,7 @@ import type { StateCreator } from "zustand/vanilla"
 
 export interface ExcelData {
   sheetName: string
-  data: string[][]
+  data: Record<string, string>[]
 }
 
 export interface AppState {
@@ -11,6 +11,8 @@ export interface AppState {
   initialLoading?: boolean
 
   activeSheet?: string
+
+  selectedColumns: Record<string, string[]>
 }
 
 interface AppAction {
@@ -18,6 +20,9 @@ interface AppAction {
   setExcelData: (excelData: ExcelData[]) => void
 
   setActiveSheet: (sheetName?: string) => void
+  setSelectedColumns: (sheetName: string, columns: string[]) => void
+
+  clearData: () => void
 }
 
 export type AppSlice = AppState & AppAction
@@ -28,9 +33,10 @@ const initialState: AppState = {
   initialLoading: true,
 
   activeSheet: typeof window === "undefined" ? undefined : localStorage.getItem("activeSheet") || undefined,
+  selectedColumns: typeof window === "undefined" ? {} : JSON.parse(localStorage.getItem("selectedColumns") || "{}"),
 }
 
-export const createAppSlice: StateCreator<AppSlice> = (setState) => ({
+export const createAppSlice: StateCreator<AppSlice> = (setState, getState) => ({
   ...initialState,
 
   setInitialLoading: (status: boolean) => {
@@ -54,5 +60,19 @@ export const createAppSlice: StateCreator<AppSlice> = (setState) => ({
 
     localStorage.setItem("activeSheet", sheetName)
     setState({ activeSheet: sheetName })
+  },
+
+  setSelectedColumns: (sheetName: string, columns: string[]) => {
+    const currentSelectedColumns = getState().selectedColumns
+    const updatedSelectedColumns = { ...currentSelectedColumns, [sheetName]: columns }
+
+    localStorage.setItem("selectedColumns", JSON.stringify(updatedSelectedColumns))
+    setState({ selectedColumns: updatedSelectedColumns })
+  },
+
+  clearData: () => {
+    localStorage.removeItem("excelData")
+    localStorage.removeItem("activeSheet")
+    setState({ excelData: [], activeSheet: undefined })
   },
 })

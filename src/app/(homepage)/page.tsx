@@ -1,11 +1,11 @@
-import ExcelTable from "@/components/excel-table"
+import ExcelTableWrapper from "@/components/excel-table/excel-table-wrapper"
 import ExcelUpload from "@/components/excel-upload"
 
 const HomePage = () => {
   return (
     <div>
       <ExcelUpload/>
-      <ExcelTable/>
+      <ExcelTableWrapper/>
     </div>
   )
 }
