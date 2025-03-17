@@ -14,6 +14,7 @@ import {
 import { Switch } from "@/components/ui/switch"
 import useSheetStoreComputed from "@/hooks/sheet-store"
 import { cn } from "@/lib/utils"
+import { useAppStore } from "@/store/store"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { FunctionComponent, useCallback, useState } from "react"
 import { useFieldArray, useForm, useWatch } from "react-hook-form"
@@ -36,15 +37,18 @@ const FormSchema = z.object({
 })
 
 const TableFilterConfig: FunctionComponent = () => {
-  const { getHeaders } = useSheetStoreComputed()
+  const activeSheet = useAppStore(state => state.activeSheet)
+  const setFilters = useAppStore(state => state.setFilters)
+  const { getHeaders, getFilters } = useSheetStoreComputed()
+
   const [isOpen, setIsOpen] = useState(false)
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      searchEnabled: false,
-      searchField: "",
-      filters: [""],
+      searchEnabled: getFilters()?.searchEnabled || false,
+      searchField: getFilters()?.searchField || "",
+      filters: getFilters()?.filters || [""],
     },
   })
 
@@ -57,8 +61,14 @@ const TableFilterConfig: FunctionComponent = () => {
   }, [])
 
   const handleOnSubmit = useCallback((data: z.infer<typeof FormSchema>) => {
-    console.log({ data })
-  }, [])
+    setFilters(activeSheet || "", {
+      searchEnabled: data.searchEnabled,
+      searchField: data.searchEnabled ? data.searchField : "",
+      filters: data.filters,
+    })
+
+    setIsOpen(false)
+  }, [activeSheet, setFilters])
 
   return (
     <Sheet open={isOpen} onOpenChange={toggleOpen}>
@@ -138,7 +148,7 @@ const TableFilterConfig: FunctionComponent = () => {
                       Add filters columns to the table
                     </FormDescription>
                   </div>
-                  <Button variant="outline" size="icon" onClick={() => filters.append("")}>
+                  <Button variant="outline" size="icon" type="button" onClick={() => filters.append("")}>
                     <FaPlus className="size-4"/>
                   </Button>
                 </div>
@@ -163,7 +173,8 @@ const TableFilterConfig: FunctionComponent = () => {
                                      </SelectContent>
                                    </Select>
                                    {filters.fields.length > 1 && (
-                                     <Button variant="outline" size="icon" className="text-red-500 border-red-500"
+                                     <Button variant="outline" size="icon" type="button"
+                                             className="text-red-500 border-red-500"
                                              onClick={() => filters.remove(index)}>
                                        <FaMinus className="size-4"/>
                                      </Button>
