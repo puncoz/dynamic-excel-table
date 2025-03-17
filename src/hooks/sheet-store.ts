@@ -8,6 +8,7 @@ const useSheetStoreComputed = () => {
   const selectedColumns = useAppStore(state => state.selectedColumns)
   const setSelectedColumns = useAppStore(state => state.setSelectedColumns)
   const filters = useAppStore(state => state.filters)
+  const appliedFilters = useAppStore(state => state.appliedFilters)
 
   const getActiveSheet = useCallback(() => {
     if (activeSheet) {
@@ -63,6 +64,15 @@ const useSheetStoreComputed = () => {
     return headers.filter(header => selectedColumns.includes(header))
   }, [getHeaders, getSelectedColumns])
 
+  const getAppliedFilters = useCallback(() => {
+    const activeSheet = getActiveSheet()
+    if (!activeSheet) {
+      return null
+    }
+
+    return appliedFilters[activeSheet] || null
+  }, [appliedFilters, getActiveSheet])
+
   const getFilteredExcelData = useCallback(() => {
     const activeSheet = getActiveSheet()
     if (!activeSheet) {
@@ -71,14 +81,29 @@ const useSheetStoreComputed = () => {
 
     const currentSheetData = excelData?.find(excelSheet => excelSheet.sheetName === activeSheet)?.data || []
     const headers = getFilteredHeaders()
+    const filters = getFilters()
+    const appliedFilters = getAppliedFilters()
 
-    return currentSheetData.map(row => {
+    let filteredData = [...currentSheetData]
+    if (appliedFilters) {
+      filteredData = filteredData.filter(row => {
+        if (appliedFilters.searchText && filters?.searchEnabled && filters?.searchField && !row[filters.searchField]?.toLowerCase()?.includes(appliedFilters.searchText.toLowerCase())) {
+          return false
+        }
+
+        return Object.entries(appliedFilters.filterValues).every(([key, value]) => {
+          return !(value && row[key] !== value)
+        })
+      })
+    }
+
+    return filteredData.map(row => {
       return headers.reduce((acc, column) => {
         acc[column] = row[column]
         return acc
       }, {} as Record<string, string>)
     })
-  }, [getActiveSheet, excelData, getFilteredHeaders])
+  }, [getActiveSheet, excelData, getFilteredHeaders, getFilters, getAppliedFilters])
 
   const getOptionsForColumn = useCallback((column: string) => {
     const activeSheet = getActiveSheet()
@@ -96,6 +121,7 @@ const useSheetStoreComputed = () => {
     getHeaders,
     getSelectedColumns,
     getFilters,
+    getAppliedFilters,
     getFilteredHeaders,
     getFilteredExcelData,
     getOptionsForColumn,

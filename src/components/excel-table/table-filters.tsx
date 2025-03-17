@@ -71,9 +71,6 @@ const TableFilters: FunctionComponent = () => {
       <Button type="submit" onClick={handleOnFilter}>
         Filter
       </Button>
-      <Button type="button" variant="outline" onClick={resetForm}>
-        Reset
-      </Button>
     </div>
   )
 }
