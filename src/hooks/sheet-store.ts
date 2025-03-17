@@ -80,6 +80,17 @@ const useSheetStoreComputed = () => {
     })
   }, [getActiveSheet, excelData, getFilteredHeaders])
 
+  const getOptionsForColumn = useCallback((column: string) => {
+    const activeSheet = getActiveSheet()
+    if (!activeSheet) {
+      return []
+    }
+
+    const currentSheetData = excelData?.find(excelSheet => excelSheet.sheetName === activeSheet)?.data || []
+    const uniqueValues = new Set(currentSheetData.map(row => row[column]))
+    return Array.from(uniqueValues)
+  }, [excelData, getActiveSheet])
+
   return {
     getActiveSheet,
     getHeaders,
@@ -87,6 +98,7 @@ const useSheetStoreComputed = () => {
     getFilters,
     getFilteredHeaders,
     getFilteredExcelData,
+    getOptionsForColumn,
   }
 }
 

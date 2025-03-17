@@ -11,6 +11,11 @@ export interface FilterConfig {
   filters: string[]
 }
 
+export interface AppliedFilterConfig {
+  searchText?: string
+  filterValues: Record<string, string>
+}
+
 export interface AppState {
   excelData?: ExcelData[]
   showExcelUpload?: boolean
@@ -20,6 +25,7 @@ export interface AppState {
 
   selectedColumns: Record<string, string[]>
   filters: Record<string, FilterConfig>
+  appliedFilters: Record<string, AppliedFilterConfig>
 }
 
 interface AppAction {
@@ -30,6 +36,7 @@ interface AppAction {
   setSelectedColumns: (sheetName: string, columns: string[]) => void
 
   setFilters: (sheetName: string, filters: FilterConfig) => void
+  setAppliedFilters: (sheetName: string, appliedFilters: AppliedFilterConfig) => void
 
   clearData: () => void
 }
@@ -45,6 +52,7 @@ const initialState: AppState = {
   selectedColumns: typeof window === "undefined" ? {} : JSON.parse(localStorage.getItem("selectedColumns") || "{}"),
 
   filters: typeof window === "undefined" ? {} : JSON.parse(localStorage.getItem("filters") || "{}"),
+  appliedFilters: {},
 }
 
 export const createAppSlice: StateCreator<AppSlice> = (setState, getState) => ({
@@ -87,6 +95,13 @@ export const createAppSlice: StateCreator<AppSlice> = (setState, getState) => ({
 
     localStorage.setItem("filters", JSON.stringify(updatedFilters))
     setState({ filters: updatedFilters })
+  },
+
+  setAppliedFilters: (sheetName: string, filters: AppliedFilterConfig) => {
+    const currentFilters = getState().appliedFilters
+    const updatedFilters = { ...currentFilters, [sheetName]: filters }
+
+    setState({ appliedFilters: updatedFilters })
   },
 
   clearData: () => {
