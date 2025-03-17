@@ -4,6 +4,7 @@ import ExcelTable from "@/components/excel-table/excel-table"
 import TableConfig from "@/components/excel-table/table-config"
 import TableFilters from "@/components/excel-table/table-filters"
 import Menu from "@/components/menu"
+import { DropdownMenu } from "@/components/ui/dropdown-menu"
 import { useAppStore } from "@/store/store"
 import { FunctionComponent } from "react"
 
