@@ -33,11 +33,6 @@ const TableFilters: FunctionComponent = () => {
     })
   }, [])
 
-  const resetForm = useCallback(() => {
-    setSearchText("")
-    setFilterValues({})
-  }, [])
-
   const handleOnFilter = useCallback(() => {
     setAppliedFilters(activeSheet || "", { searchText, filterValues })
   }, [activeSheet, filterValues, searchText, setAppliedFilters])
