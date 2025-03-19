@@ -1,9 +1,39 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import useSheetStoreComputed from "@/hooks/sheet-store"
-import { FunctionComponent } from "react"
+import { cn } from "@/lib/utils"
+import { useAppStore } from "@/store/store"
+import { FunctionComponent, useCallback, useMemo } from "react"
 
 const ExcelTable: FunctionComponent = () => {
-  const { getFilteredHeaders, getFilteredExcelData } = useSheetStoreComputed()
+  const colorOptions = useAppStore(state => state.colorOptions)
+  const { getFilteredHeaders, getFilteredExcelData, getOtherConfig } = useSheetStoreComputed()
+
+  const trafficLight = useMemo(() => {
+    const otherConfig = getOtherConfig()
+    if (!otherConfig?.trafficLightEnabled) {
+      return null
+    }
+
+    return {
+      column: otherConfig.trafficLightField,
+      colors: otherConfig.trafficLightColors,
+    }
+  }, [getOtherConfig])
+
+  const getTrafficLightClass = useCallback((row: Record<string, string>) => {
+    if (!trafficLight) {
+      return ""
+    }
+
+    const value = row[trafficLight.column]
+
+    const color = trafficLight.colors.find(color => color.value === value)
+    if (!color) {
+      return ""
+    }
+
+    return colorOptions[color.color] || ""
+  }, [colorOptions, trafficLight])
 
   return (
     <Table containerClassName="relative max-h-[calc(100vh-3rem-1rem-1.5rem-1rem-4rem)] overflow-y-auto overflow-x-auto">
@@ -17,7 +47,7 @@ const ExcelTable: FunctionComponent = () => {
 
       <TableBody>
         {getFilteredExcelData().map((row, index) => (
-          <TableRow key={index}>
+          <TableRow key={index} className={cn(getTrafficLightClass(row))}>
             {Object.entries(row).map(([key, value]) => (
               <TableCell key={`${index}-${key}`}>{value}</TableCell>
             ))}
