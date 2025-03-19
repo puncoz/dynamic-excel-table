@@ -87,11 +87,20 @@ const useSheetStoreComputed = () => {
     let filteredData = [...currentSheetData]
     if (appliedFilters) {
       filteredData = filteredData.filter(row => {
-        if (appliedFilters.searchText && filters?.searchEnabled && filters?.searchField && !row[filters.searchField]?.toLowerCase()?.includes(appliedFilters.searchText.toLowerCase())) {
+        if (
+          filters?.searchEnabled
+          && filters?.searchField
+          && appliedFilters.searchText
+          && !row[filters.searchField]?.toLowerCase()?.includes(appliedFilters.searchText.toLowerCase())
+        ) {
           return false
         }
 
         return Object.entries(appliedFilters.filterValues).every(([key, value]) => {
+          if (!filters?.filters.includes(key)) {
+            return true
+          }
+
           return !(value && row[key] !== value)
         })
       })

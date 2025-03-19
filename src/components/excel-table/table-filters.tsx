@@ -42,16 +42,20 @@ const TableFilters: FunctionComponent = () => {
   }
 
   return (
-    <div onSubmit={handleOnFilter} className="flex flex-row gap-2">
+    <div onSubmit={handleOnFilter} className="grid grid-cols-5 gap-2">
       {filters.searchEnabled && (
-        <Input type="search" placeholder="Search..." value={searchText} onChange={handleOnSearchTextChange}/>
+        <Input type="search"
+               placeholder="Search..."
+               value={searchText}
+               onChange={handleOnSearchTextChange}
+               className="w-full"/>
       )}
 
       {filters.filters.map((filter, index) => (
         <Select key={`filter-${index}-${filter}`}
                 onValueChange={(val) => handleOnFilterFieldChange(filter, val)}
                 defaultValue={filterValues[filter]}>
-          <SelectTrigger className="w-48">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder={`Select ${filter}`}/>
           </SelectTrigger>
           <SelectContent>

@@ -6,9 +6,9 @@ const ExcelTable: FunctionComponent = () => {
   const { getFilteredHeaders, getFilteredExcelData } = useSheetStoreComputed()
 
   return (
-    <Table className="relative">
-      <TableHeader>
-        <TableRow className="sticky top-0">
+    <Table containerClassName="relative max-h-[calc(100vh-3rem-1rem-1.5rem-1rem-4rem)] overflow-y-auto overflow-x-auto">
+      <TableHeader className="sticky top-0 bg-white shadow-md">
+        <TableRow>
           {getFilteredHeaders()?.map((header, index) => (
             <TableHead key={index}>{header}</TableHead>
           ))}

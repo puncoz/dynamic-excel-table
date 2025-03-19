@@ -25,7 +25,7 @@ import { z } from "zod"
 const FormSchema = z.object({
   searchEnabled: z.boolean().default(false),
   searchField: z.string().optional().default(""),
-  filters: z.array(z.string()).min(1, "At least one filter is required"),
+  filters: z.array(z.string()).default([]),
 }).superRefine((data, ctx) => {
   if (data.searchEnabled && !data.searchField) {
     ctx.addIssue({
@@ -48,7 +48,7 @@ const TableFilterConfig: FunctionComponent = () => {
     defaultValues: {
       searchEnabled: getFilters()?.searchEnabled || false,
       searchField: getFilters()?.searchField || "",
-      filters: getFilters()?.filters || [""],
+      filters: getFilters()?.filters || [],
     },
   })
 
@@ -172,13 +172,11 @@ const TableFilterConfig: FunctionComponent = () => {
                                        ))}
                                      </SelectContent>
                                    </Select>
-                                   {filters.fields.length > 1 && (
-                                     <Button variant="outline" size="icon" type="button"
-                                             className="text-red-500 border-red-500"
-                                             onClick={() => filters.remove(index)}>
-                                       <FaMinus className="size-4"/>
-                                     </Button>
-                                   )}
+                                   <Button variant="outline" size="icon" type="button"
+                                           className="text-red-500 border-red-500"
+                                           onClick={() => filters.remove(index)}>
+                                     <FaMinus className="size-4"/>
+                                   </Button>
                                  </div>
                                  <FormMessage/>
                                </FormItem>

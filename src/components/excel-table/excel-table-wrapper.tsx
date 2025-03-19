@@ -24,13 +24,13 @@ const ExcelTableWrapper: FunctionComponent = () => {
       </div>
 
       {/*filter and column selection*/}
-      <div className="flex justify-between items-center mt-4">
+      <div className="grid grid-cols-[auto_max-content] w-full mt-4 gap-32">
         <TableFilters/>
         <TableConfig/>
       </div>
 
       {/*table*/}
-      <div className="max-h-[calc(100vh-3rem-1rem-1.5rem-1rem-4rem)] overflow-y-auto overflow-x-auto">
+      <div className="mt-4">
         <ExcelTable/>
       </div>
     </div>
