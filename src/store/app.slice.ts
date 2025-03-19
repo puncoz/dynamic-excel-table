@@ -1,3 +1,4 @@
+import type { ClassNameValue } from "tailwind-merge"
 import type { StateCreator } from "zustand/vanilla"
 
 export interface ExcelData {
@@ -16,6 +17,12 @@ export interface AppliedFilterConfig {
   filterValues: Record<string, string>
 }
 
+export interface OtherConfig {
+  trafficLightEnabled: boolean
+  trafficLightField: string
+  trafficLightColors: { color: string, value: string }[]
+}
+
 export interface AppState {
   excelData?: ExcelData[]
   showExcelUpload?: boolean
@@ -26,6 +33,10 @@ export interface AppState {
   selectedColumns: Record<string, string[]>
   filters: Record<string, FilterConfig>
   appliedFilters: Record<string, AppliedFilterConfig>
+
+  otherConfig: Record<string, OtherConfig>
+
+  colorOptions: Record<string, string>
 }
 
 interface AppAction {
@@ -37,6 +48,8 @@ interface AppAction {
 
   setFilters: (sheetName: string, filters: FilterConfig) => void
   setAppliedFilters: (sheetName: string, appliedFilters: AppliedFilterConfig) => void
+
+  setOtherConfig: (sheetName: string, otherConfig: OtherConfig) => void
 
   clearData: () => void
 }
@@ -53,6 +66,14 @@ const initialState: AppState = {
 
   filters: typeof window === "undefined" ? {} : JSON.parse(localStorage.getItem("filters") || "{}"),
   appliedFilters: {},
+
+  otherConfig: typeof window === "undefined" ? {} : JSON.parse(localStorage.getItem("otherConfig") || "{}"),
+
+  colorOptions: {
+    "red": "bg-red-500 text-white hover:bg-red-600 focus:bg-red-600",
+    "yellow": "bg-yellow-500 text-white hover:bg-yellow-600 focus:bg-yellow-600",
+    "green": "bg-green-500 text-white hover:bg-green-600 focus:bg-green-600",
+  },
 }
 
 export const createAppSlice: StateCreator<AppSlice> = (setState, getState) => ({
@@ -104,10 +125,21 @@ export const createAppSlice: StateCreator<AppSlice> = (setState, getState) => ({
     setState({ appliedFilters: updatedFilters })
   },
 
+  setOtherConfig: (sheetName: string, otherConfig: OtherConfig) => {
+    const currentOtherConfig = getState().otherConfig
+    const updatedOtherConfig = { ...currentOtherConfig, [sheetName]: otherConfig }
+
+    localStorage.setItem("otherConfig", JSON.stringify(updatedOtherConfig))
+    setState({ otherConfig: updatedOtherConfig })
+  },
+
   clearData: () => {
     localStorage.removeItem("excelData")
     localStorage.removeItem("activeSheet")
     localStorage.removeItem("selectedColumns")
+    localStorage.removeItem("filters")
+    localStorage.removeItem("otherConfig")
+
     setState({ excelData: [], activeSheet: undefined })
     setState({ showExcelUpload: true })
   },

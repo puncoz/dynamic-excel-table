@@ -9,6 +9,7 @@ const useSheetStoreComputed = () => {
   const setSelectedColumns = useAppStore(state => state.setSelectedColumns)
   const filters = useAppStore(state => state.filters)
   const appliedFilters = useAppStore(state => state.appliedFilters)
+  const otherConfig = useAppStore(state => state.otherConfig)
 
   const getActiveSheet = useCallback(() => {
     if (activeSheet) {
@@ -125,6 +126,15 @@ const useSheetStoreComputed = () => {
     return Array.from(uniqueValues)
   }, [excelData, getActiveSheet])
 
+  const getOtherConfig = useCallback(() => {
+    const activeSheet = getActiveSheet()
+    if (!activeSheet) {
+      return null
+    }
+
+    return otherConfig[activeSheet] || null
+  }, [otherConfig, getActiveSheet])
+
   return {
     getActiveSheet,
     getHeaders,
@@ -134,6 +144,7 @@ const useSheetStoreComputed = () => {
     getFilteredHeaders,
     getFilteredExcelData,
     getOptionsForColumn,
+    getOtherConfig,
   }
 }
 

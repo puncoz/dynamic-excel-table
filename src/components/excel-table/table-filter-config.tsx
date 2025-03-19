@@ -90,7 +90,7 @@ const TableFilterConfig: FunctionComponent = () => {
 
             <div className="overflow-auto border-t">
               {/*search filter*/}
-              <div className="space-y-4 border-b p-3">
+              <div className="space-y-4 border-b p-4">
                 <FormField control={form.control}
                            name="searchEnabled"
                            render={({ field }) => (
@@ -100,7 +100,7 @@ const TableFilterConfig: FunctionComponent = () => {
                                  searchEnabled && "pb-0",
                                )}>
                                <div className="space-y-1">
-                                 <FormLabel className="font-normal">Search filter enabled?</FormLabel>
+                                 <FormLabel className="font-semibold">Search filter enabled?</FormLabel>
                                  <FormDescription className="text-xs">
                                    Enable or disable the search filter
                                  </FormDescription>
@@ -116,8 +116,7 @@ const TableFilterConfig: FunctionComponent = () => {
                   <FormField control={form.control}
                              name="searchField"
                              render={({ field }) => (
-                               <FormItem
-                                 className="flex flex-col justify-between pt-1">
+                               <FormItem className="flex flex-col justify-between pt-1">
                                  <div className="space-y-1">
                                    <FormLabel className="font-normal">Search field:</FormLabel>
                                  </div>
@@ -140,10 +139,10 @@ const TableFilterConfig: FunctionComponent = () => {
               </div>
 
               {/*dynamic filters*/}
-              <div className="space-y-4 border-b p-3">
+              <div className="space-y-4 border-b p-4">
                 <div className="flex flex-row justify-between items-center">
                   <div className="space-y-1">
-                    <FormLabel className="font-normal">Select filters</FormLabel>
+                    <FormLabel className="font-semibold">Select filters</FormLabel>
                     <FormDescription className="text-xs">
                       Add filters columns to the table
                     </FormDescription>

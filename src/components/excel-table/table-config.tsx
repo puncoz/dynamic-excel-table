@@ -1,5 +1,6 @@
 import TableColumnSelector from "@/components/excel-table/table-column-selector"
 import TableFilterConfig from "@/components/excel-table/table-filter-config"
+import TableOtherConfig from "@/components/excel-table/TableOtherConfig"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -30,6 +31,10 @@ const TableConfig: FunctionComponent = () => {
 
           <DropdownMenuItem asChild>
             <TableFilterConfig/>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem asChild>
+            <TableOtherConfig/>
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
